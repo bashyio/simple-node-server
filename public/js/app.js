@@ -1,7 +1,4 @@
-console.log('Site loaded')
 const address = 'Lagos'
-
-
 
 const weatherForm = document.querySelector('form')
 const searchEl = document.querySelector('input')
