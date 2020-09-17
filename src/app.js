@@ -1,24 +1,25 @@
 const path = require('path')
 const express = require('express')
 const hbs = require('hbs')
-const forecast = require('./utils/forecast')
-const geocode = require('./utils/geocode')
+const geocode = require('../src/utils/geocode')
+const forecast = require('../src/utils/forecast')
 
 const app = express()
-const port = process.env.PORT || 3000
-const publicDirPath = path.join(__dirname, '../public')
+
+//define paths for Express config
+const publicDirectoryPath = path.join(__dirname, '../public')
 const viewsPath = path.join(__dirname, '../templates/views')
 const partialsPath = path.join(__dirname, '../templates/partials')
 
-//Setup handlebars
+//Setup handlebars engine and views location
 app.set('view engine', 'hbs')
 app.set('views', viewsPath)
 hbs.registerPartials(partialsPath)
 
-//Static directory to serve
-app.use(express.static(publicDirPath))
+//Setup static directory to serve
+app.use(express.static(publicDirectoryPath))
 
-app.get('/', (req, res) => {
+app.get('', (req, res) => {
   res.render('index', {
     title: 'Weather App',
     name: 'Bashy'
@@ -27,7 +28,7 @@ app.get('/', (req, res) => {
 
 app.get('/about', (req, res) => {
   res.render('about', {
-    title: 'About Us',
+    title: 'About Me',
     name: 'Bashy'
   })
 })
@@ -36,20 +37,18 @@ app.get('/help', (req, res) => {
   res.render('help', {
     title: 'Help',
     name: 'Bashy',
-    helpText: 'This is some helpful text.'
+    helpText: 'Help Message Leleyi o!',
   })
 })
 
 app.get('/weather', (req, res) => {
-  const address = req.query.address
-
-  if (!address) {
+  if (!req.query.address) {
     return res.send({
-      error: 'Please provide a location.'
+      error: 'You must provide an address.'
     })
   }
 
-  geocode(address, (error, {
+  geocode(req.query.address, (error, {
     latitude,
     longitude,
     location
@@ -59,50 +58,40 @@ app.get('/weather', (req, res) => {
         error
       })
     }
+
     forecast(latitude, longitude, (error, forecastData) => {
       if (error) {
         return res.send({
           error
         })
       }
+
       res.send({
         forecast: forecastData,
         location,
-        address: address
+        address: req.query.address
       })
     })
-  })
 
-})
-
-app.get('/products', (req, res) => {
-  if (!req.query.search) {
-    return res.send({
-      error: 'Please provide a search term.'
-    })
-  }
-
-  console.log(req.query.search)
-  res.send({
-    products: []
   })
 })
 
 app.get('/help/*', (req, res) => {
   res.render('404', {
-    title: 'Help article not found.',
-    name: 'Bashy',
+    title: '404',
+    message: 'Help Article not Found!',
+    name: 'Bashy'
   })
 })
-
 
 app.get('*', (req, res) => {
   res.render('404', {
-    title: 'Page Not Found',
-    name: 'Bashy',
+    title: '404',
+    message: 'Page not Found!',
+    name: 'Bashy'
   })
 })
 
-app.listen(port, () => {
+app.listen(3000, () => {
   console.log('Server is up on port 3000.')
 })

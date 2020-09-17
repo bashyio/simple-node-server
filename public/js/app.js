@@ -1,27 +1,32 @@
-const address = 'Lagos'
-
 const weatherForm = document.querySelector('form')
-const searchEl = document.querySelector('input')
-const messageOne = document.querySelector('#message-1')
-const messageTwo = document.querySelector('#message-2')
-const resultText = document.querySelector('p')
+const search = document.querySelector('input#search')
+const messageOne = document.querySelector('p#message-1')
+const messageTwo = document.querySelector('p#message-2')
 
 weatherForm.addEventListener('submit', (e) => {
   e.preventDefault()
-  messageOne.innerText = 'Please wait...'
-  messageTwo.innerText = ''
 
-  fetch('/weather?address=' + searchEl.value).then((response) => {
-    response.json().then((data) => {
-      if (data.error) {
-        messageOne.innerText = data.error
+  const location = search.value
+
+  messageOne.textContent = 'Please wait...'
+  messageTwo.textContent = ''
+
+  fetch('http://127.0.0.1:3000/weather?address=' + location).then((response) => {
+      if (response.ok) {
+        return response.json();
       } else {
-        messageOne.innerText = data.location
-        messageTwo.innerText = data.forecast
+        throw new Error('Request failed.');
       }
     })
-  }).catch((error) => {
-    console.log(error)
-  })
-
+    .then((data) => {
+      if (data.error) {
+        messageOne.textContent = data.error
+      } else {
+        messageOne.textContent = data.location
+        messageTwo.textContent = data.forecast
+      }
+    })
+    .catch((error) => {
+      messageOne.textContent = data.error
+    });
 })

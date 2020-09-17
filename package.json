@@ -4,14 +4,20 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node src/app.js"
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js -e js,hbs"
   },
   "keywords": [],
-  "author": "",
+  "author": "Simple Node Server for Weather Checker",
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1",
     "hbs": "^4.1.1",
+    "nodemon": "^2.0.4",
     "postman-request": "^2.88.1-postman.23"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/bashyio/simple-node-server.git"
   }
 }
